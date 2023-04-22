@@ -1,0 +1,10 @@
+main {
+  padding-left: 30px;
+  padding-right: 30px;
+  padding-top: 15px;
+  padding-bottom: 50px;
+  border-bottom-left-radius: 50px;
+  border-top-right-radius: 50px;
+  margin-top: 10px;
+  opacity: 0.9;
+}

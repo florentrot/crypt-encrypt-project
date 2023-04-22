@@ -1,0 +1,10 @@
+.page-wrapper {
+  background-color: white;
+  background-image: url('../../src/assets/keys_wallpaper.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  background-size: cover;
+  display: flex;
+  flex-direction: column;
+  height: 1000px;
+}

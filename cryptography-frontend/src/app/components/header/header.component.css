@@ -1,0 +1,11 @@
+nav {
+  padding: 15px;
+  border-bottom-left-radius: 50px;
+  border-top-right-radius: 50px;
+  margin-top: 10px;
+  opacity: 0.9;
+}
+
+a {
+  font-size: larger;
+}

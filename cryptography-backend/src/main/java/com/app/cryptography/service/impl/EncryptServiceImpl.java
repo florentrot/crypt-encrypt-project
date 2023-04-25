@@ -1,5 +1,6 @@
 package com.app.cryptography.service.impl;
 
+import com.app.cryptography.dto.FileModelDTO;
 import com.app.cryptography.model.CryptoComponents;
 import com.app.cryptography.model.FileModel;
 import com.app.cryptography.service.CryptoService;
@@ -27,13 +28,14 @@ import java.security.NoSuchAlgorithmException;
 @Service
 public class EncryptServiceImpl implements CryptoService {
 
+
     @Value("${encrypt.path}")
     private String encryptPath;
     private static final String ALGORITHM = "AES";
     private static final String CIPHER = "AES/CBC/PKCS5PADDING";
 
 
-    public CryptoComponents encrypt(String filePath) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public CryptoComponents encrypt(String filePath, FileModelDTO fileModelDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
 
         //1. create NewSecureRandom object
         NewSecureRandomService nsr = new NewSecureRandomService();
@@ -41,6 +43,7 @@ public class EncryptServiceImpl implements CryptoService {
 
         //2. get iv and key hexa
         CryptoComponents ec = new CryptoComponents();
+        ec.setFileId(fileModelDTO.getFileId());
         ec.setKeyNo(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("key")).bytesToHex());
         ec.setIV(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("iv")).bytesToHex());
 

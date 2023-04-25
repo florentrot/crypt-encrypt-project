@@ -8,7 +8,7 @@ import {FileModel} from "../model/file-model";
 })
 export class FileUploadService {
 
-  private baseUrl = 'http://localhost:8080';
+  private baseUrl = 'http://localhost:8081';
 
   constructor(private http: HttpClient) {
   }

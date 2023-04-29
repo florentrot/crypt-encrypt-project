@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FilesService} from "../../services/files.service";
-import {FileModel} from "../../model/file-model";
+import {FileToEncrypt} from "../../model/file-to-encrypt";
 import {FileEncryptService} from "../../services/file-encrypt.service";
 import {v4 as uuidv4} from 'uuid';
 import {ConfirmButton} from "../ag-grid-component/button-cell-confirm.components";
@@ -29,7 +29,7 @@ export class EncryptComponent implements OnInit {
   isEncryptionDone: boolean = false;
 
   selectedFile: File = null;
-  unsavedFiles = new Array<FileModel>();
+  unsavedFiles = new Array<FileToEncrypt>();
   rowData: any[];
   columnApi: ColumnApi;
   gridApi: GridApi;
@@ -120,15 +120,15 @@ export class EncryptComponent implements OnInit {
   }
 
   private addFileModel(file: File) {
-    let fileModel = new FileModel();
-    fileModel.fileId = uuidv4();
-    fileModel.fileName = file.name.substring(0, file.name.lastIndexOf("."));
-    fileModel.fileSize = file.size;
-    fileModel.fileType = file.type;
-    fileModel.fileExtension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
-    fileModel.fileStatus = "Unconfirmed";
-    fileModel.file = file;
-    this.unsavedFiles.push(fileModel);
+    let fileToEncrypt = new FileToEncrypt();
+    fileToEncrypt.fileId = uuidv4();
+    fileToEncrypt.fileName = file.name.substring(0, file.name.lastIndexOf("."));
+    fileToEncrypt.fileSize = file.size;
+    fileToEncrypt.fileType = file.type;
+    fileToEncrypt.fileExtension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
+    fileToEncrypt.fileStatus = "Unconfirmed";
+    fileToEncrypt.file = file;
+    this.unsavedFiles.push(fileToEncrypt);
   }
 
   clearForm() {
@@ -171,16 +171,16 @@ export class EncryptComponent implements OnInit {
     }
   }
 
-  onSaveFile(fileModel: FileModel) {
-    this.fileUploadService.uploadFile(fileModel).subscribe(() => {
+  onSaveFile(fileToEncrypt: FileToEncrypt) {
+    this.fileUploadService.uploadFile(fileToEncrypt).subscribe(() => {
       this.getAllData();
       this.refreshData();
     });
 
     this.isFileSaved = true;
 
-    this.unsavedFiles = this.unsavedFiles.filter(data => data != fileModel);
-    this.rowData = this.rowData.filter(data => data !== fileModel);
+    this.unsavedFiles = this.unsavedFiles.filter(data => data != fileToEncrypt);
+    this.rowData = this.rowData.filter(data => data !== fileToEncrypt);
 
     this.fileToEncrypt.nativeElement.value = null;
     this.recipientsEmail.nativeElement.value = "";
@@ -193,8 +193,8 @@ export class EncryptComponent implements OnInit {
     }, 5000)
   }
 
-  onEncrypt(fileModel: FileModel) {
-    this.fileEncryptService.encrypt(fileModel).subscribe(() => {
+  onEncrypt(fileToEncrypt: FileToEncrypt) {
+    this.fileEncryptService.encrypt(fileToEncrypt).subscribe(() => {
       this.getAllData();
       this.refreshData()
     });
@@ -205,21 +205,21 @@ export class EncryptComponent implements OnInit {
     }, 5000)
   }
 
-  onAddRow(fileModel: FileModel): void {
-    this.rowData.push(fileModel);
+  onAddRow(fileToEncrypt: FileToEncrypt): void {
+    this.rowData.push(fileToEncrypt);
     this.gridApi.applyTransaction({
-        add: [fileModel]
+        add: [fileToEncrypt]
       }
     );
   }
 
-  onRemoveRow(fileModel: FileModel): void {
-    this.rowData = this.rowData.filter(data => data !== fileModel);
+  onRemoveRow(fileToEncrypt: FileToEncrypt): void {
+    this.rowData = this.rowData.filter(data => data !== fileToEncrypt);
     console.log(this.rowData);
-    this.unsavedFiles = this.unsavedFiles.filter(data => data !== fileModel);
+    this.unsavedFiles = this.unsavedFiles.filter(data => data !== fileToEncrypt);
     this.selectedFile = null;
     this.gridApi.applyTransaction({
-        remove: [fileModel]
+        remove: [fileToEncrypt]
       }
     );
     if (this.unsavedFiles.length === 0) {

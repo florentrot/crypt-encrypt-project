@@ -1,4 +1,4 @@
-export class FileModel{
+export class FileToEncrypt {
 
   fileId?: string;
   fileName?: string;

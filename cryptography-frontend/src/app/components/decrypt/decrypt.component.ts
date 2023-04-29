@@ -1,12 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FileModel} from "../../model/file-model";
+import {FileToEncrypt} from "../../model/file-to-encrypt";
 import {AgGridAngular} from "ag-grid-angular";
 import {ColumnApi, GridApi, GridOptions} from "ag-grid-community";
 import {Subject} from "rxjs";
 import {FilesService} from "../../services/files.service";
 import {DownloadButton} from "../ag-grid-component/button-cell-download.components";
 import {DownloadDisabledButton} from "../ag-grid-component/button-cell-download-disabled.components";
-import {DecryptComponentsDTO} from "../../model/decrypt-components-model";
+import {DecryptComponentsDTO} from "../../dto/decrypt-components";
 
 @Component({
   selector: 'app-decrypt',
@@ -27,7 +27,7 @@ export class DecryptComponent implements OnInit {
   isDecryptionDone: boolean = false;
 
   selectedFile: File = null;
-  filesToDecrypt = new Array<FileModel>();
+  filesToDecrypt = new Array<FileToEncrypt>();
   rowData: any[];
   columnApi: ColumnApi;
   gridApi: GridApi;

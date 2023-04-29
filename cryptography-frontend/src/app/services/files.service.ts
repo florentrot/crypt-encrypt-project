@@ -27,7 +27,7 @@ export class FilesService {
   }
 
   getAllDecryptedFiles(): Observable<DecryptedFile[]> {
-    return this.http.get<FileToEncrypt[]>(`${this.baseUrl}/decryptedFiles`);
+    return this.http.get<DecryptedFile[]>(`${this.baseUrl}/decryptedFiles`);
   }
 
 }

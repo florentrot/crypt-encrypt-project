@@ -8,7 +8,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public interface CryptoService {
+public interface EncryptService {
 
     CryptoComponents encrypt(String filePath, FileToEncryptDTO fileToEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException;
 }

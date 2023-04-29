@@ -1,8 +1,9 @@
 package com.app.cryptography.service.impl;
 
 import com.app.cryptography.dto.FileToEncryptDTO;
-import com.app.cryptography.model.FilesToEncrypt;
-import com.app.cryptography.repository.FileRepository;
+import com.app.cryptography.model.DecryptedFile;
+import com.app.cryptography.model.FileToEncrypt;
+import com.app.cryptography.repository.FileToEncryptRepository;
 import com.app.cryptography.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -16,56 +17,55 @@ import java.util.List;
 @Service
 public class FileServiceImpl implements FileService {
 
-    @Value("${files.path}")
-    public String filesPath;
+    @Value("${files.to.encrypt.path}")
+    public String filesToEncryptPath;
 
-    FileRepository fileRepository;
+    FileToEncryptRepository fileToEncryptRepository;
 
-    FileServiceImpl(FileRepository fileRepository) {
-        this.fileRepository = fileRepository;
+    FileServiceImpl(FileToEncryptRepository fileToEncryptRepository) {
+        this.fileToEncryptRepository = fileToEncryptRepository;
     }
 
     @Override
-    public void saveFile(MultipartFile file, FileToEncryptDTO fileToEncryptDTO) throws IOException {
-      //  File savedFile = new File(filesPath + file.getOriginalFilename());
-        File savedFile = new File(filesPath + fileToEncryptDTO.getFileId() + fileToEncryptDTO.getFileExtension());
+    public void saveFileToEncrypt(MultipartFile file, FileToEncryptDTO fileToEncryptDTO) throws IOException {
 
-        //save file
-        FileOutputStream fos = new FileOutputStream(savedFile);
-        fos.write(file.getBytes());
-        fos.close();
+            File savedFile = new File(filesToEncryptPath + fileToEncryptDTO.getFileId() + fileToEncryptDTO.getFileExtension());
 
-        //convert
-        FilesToEncrypt filesToEncrypt = mapToEntity(fileToEncryptDTO);
-        filesToEncrypt.setFileStatus("Saved");
+            //save file
+            FileOutputStream fos = new FileOutputStream(savedFile);
+            fos.write(file.getBytes());
+            fos.close();
 
-        //save in database
-        this.fileRepository.save(filesToEncrypt);
+            //convert
+            FileToEncrypt fileToEncrypt = mapToEntity(fileToEncryptDTO);
+            fileToEncrypt.setFileStatus("Saved");
+
+            //save in database
+            this.fileToEncryptRepository.save(fileToEncrypt);
 
     }
 
     @Override
     public void updateFile(FileToEncryptDTO fileToEncryptDTO) {
-       FilesToEncrypt fileToUpdate = this.fileRepository.findById(fileToEncryptDTO.getFileId()).get();
+        FileToEncrypt fileToUpdate = this.fileToEncryptRepository.findById(fileToEncryptDTO.getFileId()).get();
         fileToUpdate.setFileStatus("Encrypted");
-        this.fileRepository.save(fileToUpdate);
+        this.fileToEncryptRepository.save(fileToUpdate);
     }
 
-    public List<FilesToEncrypt> getAllFileModel() {
-        return this.fileRepository.findAll();
+    public List<FileToEncrypt> getAllFileModel() {
+        return this.fileToEncryptRepository.findAll();
     }
 
-    public static FilesToEncrypt mapToEntity(FileToEncryptDTO fileToEncryptDTO) {
-        FilesToEncrypt filesToEncrypt = new FilesToEncrypt();
-        filesToEncrypt.setFileId(fileToEncryptDTO.getFileId());
-        filesToEncrypt.setFileExtension(fileToEncryptDTO.getFileExtension());
-        filesToEncrypt.setFileType(fileToEncryptDTO.getFileType());
-        filesToEncrypt.setFileSize(fileToEncryptDTO.getFileSize());
-        filesToEncrypt.setFileName(fileToEncryptDTO.getFileName());
-        filesToEncrypt.setRecipientsEmail(fileToEncryptDTO.getRecipientsEmail());
-        return filesToEncrypt;
+    public static FileToEncrypt mapToEntity(FileToEncryptDTO fileToEncryptDTO) {
+        FileToEncrypt fileToEncrypt = new FileToEncrypt();
+        fileToEncrypt.setFileId(fileToEncryptDTO.getFileId());
+        fileToEncrypt.setFileExtension(fileToEncryptDTO.getFileExtension());
+        fileToEncrypt.setFileType(fileToEncryptDTO.getFileType());
+        fileToEncrypt.setFileSize(fileToEncryptDTO.getFileSize());
+        fileToEncrypt.setFileName(fileToEncryptDTO.getFileName());
+        fileToEncrypt.setRecipientsEmail(fileToEncryptDTO.getRecipientsEmail());
+        return fileToEncrypt;
     }
-
 
 
 }

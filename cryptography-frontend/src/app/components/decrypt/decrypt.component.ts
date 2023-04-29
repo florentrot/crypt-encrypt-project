@@ -123,10 +123,10 @@ export class DecryptComponent implements OnInit {
     console.log(this.decryptComponentsDTO);
 
 
-      this.fileDecryptService.decrypt(this.decryptComponentsDTO).subscribe(() => {
-        this.getAllData();
-       // this.refreshData();
-      });
+    this.fileDecryptService.decrypt(this.decryptComponentsDTO).subscribe(() => {
+      this.getAllData();
+      // this.refreshData();
+    });
 
     // this.fileEncryptService.encrypt(fileModel).subscribe(() => {
     //   this.getAllData();
@@ -137,7 +137,8 @@ export class DecryptComponent implements OnInit {
     // setTimeout(() => {
     //   this.isEncryptionDone = false;
     // }, 5000)
-
+    this.clearForm();
+    // add decryption done
   }
 
   checkValidForm() {
@@ -149,7 +150,7 @@ export class DecryptComponent implements OnInit {
     }
 
     // CHECK FOR ClearButton
-    if(this.selectedFile !== null || this.keyNumber.nativeElement.value.length || this.fileId.nativeElement.value.length) {
+    if (this.selectedFile !== null || this.keyNumber.nativeElement.value.length || this.fileId.nativeElement.value.length) {
       this.isClearDisabled = false;
     } else {
       this.isClearDisabled = true;

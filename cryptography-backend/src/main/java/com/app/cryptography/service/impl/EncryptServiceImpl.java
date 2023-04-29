@@ -2,8 +2,8 @@ package com.app.cryptography.service.impl;
 
 import com.app.cryptography.dto.FileToEncryptDTO;
 import com.app.cryptography.model.CryptoComponents;
-import com.app.cryptography.model.FilesToEncrypt;
-import com.app.cryptography.service.CryptoService;
+import com.app.cryptography.model.FileToEncrypt;
+import com.app.cryptography.service.EncryptService;
 import com.app.cryptography.service.common.ConvertHexAndBytesService;
 import com.app.cryptography.service.common.NewSecureRandomService;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,10 +26,10 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @Service
-public class EncryptServiceImpl implements CryptoService {
+public class EncryptServiceImpl implements EncryptService {
 
 
-    @Value("${encrypt.path}")
+    @Value("${encrypted.path}")
     private String encryptPath;
     private static final String ALGORITHM = "AES";
     private static final String CIPHER = "AES/CBC/PKCS5PADDING";
@@ -49,7 +49,7 @@ public class EncryptServiceImpl implements CryptoService {
 
         //3. path to file
         File file = new File(filePath);
-        FilesToEncrypt filesToEncrypt = new FilesToEncrypt(file);
+        FileToEncrypt fileToEncrypt = new FileToEncrypt(file);
 
 
         //4. create IvParameterSpec and SecretKeySpec
@@ -65,8 +65,8 @@ public class EncryptServiceImpl implements CryptoService {
         final Path criptDir = Paths.get(encryptPath);
 
         //7. encrypt
-        final Path encryptedFilePath = criptDir.resolve(filesToEncrypt.getFileName().substring(0, filesToEncrypt.getFileName().indexOf(".")) + ".enc");
-        try (InputStream fin = Files.newInputStream(Paths.get(filesToEncrypt.getFilePath()));
+        final Path encryptedFilePath = criptDir.resolve(fileToEncrypt.getFileName().substring(0, fileToEncrypt.getFileName().indexOf(".")) + ".enc");
+        try (InputStream fin = Files.newInputStream(Paths.get(fileToEncrypt.getFilePath()));
              OutputStream fout = Files.newOutputStream(encryptedFilePath);
              CipherOutputStream cipherOut = new CipherOutputStream(fout, cipher) {
              }) {

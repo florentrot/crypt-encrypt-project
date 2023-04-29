@@ -146,7 +146,6 @@ export class EncryptComponent implements OnInit {
   onConfirmForm() {
     this.unsavedFiles[0].recipientsEmail = this.recipientsEmail.nativeElement.value;
     this.onAddRow(this.unsavedFiles[0]);
-    console.log(this.unsavedFiles);
 
     this.fileToEncrypt.nativeElement.value = null;
     this.recipientsEmail.nativeElement.value = "";

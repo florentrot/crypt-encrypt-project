@@ -6,7 +6,8 @@ import {Subject} from "rxjs";
 import {FilesService} from "../../services/files.service";
 import {DownloadButton} from "../ag-grid-component/button-cell-download.components";
 import {DownloadDisabledButton} from "../ag-grid-component/button-cell-download-disabled.components";
-import {DecryptComponentsDTO} from "../../dto/decrypt-components";
+import {DecryptComponentsDTO} from "../../dto/decrypt-components-dto";
+import {FileDecryptService} from "../../services/file-decrypt.service";
 
 @Component({
   selector: 'app-decrypt',
@@ -81,7 +82,8 @@ export class DecryptComponent implements OnInit {
     this.dataUpdated$.unsubscribe();
   }
 
-  constructor(private fileUploadService: FilesService) {
+  constructor(private fileUploadService: FilesService,
+              private fileDecryptService: FileDecryptService) {
   }
 
   insertFile(event: any) {
@@ -119,6 +121,12 @@ export class DecryptComponent implements OnInit {
 
     console.log("this is what I send");
     console.log(this.decryptComponentsDTO);
+
+
+      this.fileDecryptService.decrypt(this.decryptComponentsDTO).subscribe(() => {
+        this.getAllData();
+       // this.refreshData();
+      });
 
     // this.fileEncryptService.encrypt(fileModel).subscribe(() => {
     //   this.getAllData();

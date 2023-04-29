@@ -1,8 +1,8 @@
 package com.app.cryptography.service.impl;
 
-import com.app.cryptography.dto.FileModelDTO;
+import com.app.cryptography.dto.FileToEncryptDTO;
 import com.app.cryptography.model.CryptoComponents;
-import com.app.cryptography.model.FileModel;
+import com.app.cryptography.model.FilesToEncrypt;
 import com.app.cryptography.service.CryptoService;
 import com.app.cryptography.service.common.ConvertHexAndBytesService;
 import com.app.cryptography.service.common.NewSecureRandomService;
@@ -35,7 +35,7 @@ public class EncryptServiceImpl implements CryptoService {
     private static final String CIPHER = "AES/CBC/PKCS5PADDING";
 
 
-    public CryptoComponents encrypt(String filePath, FileModelDTO fileModelDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public CryptoComponents encrypt(String filePath, FileToEncryptDTO fileToEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
 
         //1. create NewSecureRandom object
         NewSecureRandomService nsr = new NewSecureRandomService();
@@ -43,13 +43,13 @@ public class EncryptServiceImpl implements CryptoService {
 
         //2. get iv and key hexa
         CryptoComponents ec = new CryptoComponents();
-        ec.setFileId(fileModelDTO.getFileId());
+        ec.setFileId(fileToEncryptDTO.getFileId());
         ec.setKeyNo(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("key")).bytesToHex());
         ec.setIV(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("iv")).bytesToHex());
 
         //3. path to file
         File file = new File(filePath);
-        FileModel fileModel = new FileModel(file);
+        FilesToEncrypt filesToEncrypt = new FilesToEncrypt(file);
 
 
         //4. create IvParameterSpec and SecretKeySpec
@@ -65,8 +65,8 @@ public class EncryptServiceImpl implements CryptoService {
         final Path criptDir = Paths.get(encryptPath);
 
         //7. encrypt
-        final Path encryptedFilePath = criptDir.resolve(fileModel.getFileName().substring(0, fileModel.getFileName().indexOf(".")) + ".enc");
-        try (InputStream fin = Files.newInputStream(Paths.get(fileModel.getFilePath()));
+        final Path encryptedFilePath = criptDir.resolve(filesToEncrypt.getFileName().substring(0, filesToEncrypt.getFileName().indexOf(".")) + ".enc");
+        try (InputStream fin = Files.newInputStream(Paths.get(filesToEncrypt.getFilePath()));
              OutputStream fout = Files.newOutputStream(encryptedFilePath);
              CipherOutputStream cipherOut = new CipherOutputStream(fout, cipher) {
              }) {

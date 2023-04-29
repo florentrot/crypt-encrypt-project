@@ -3,7 +3,7 @@ package com.app.cryptography.dto;
 import lombok.Data;
 
 @Data
-public class FileModelDTO {
+public class FileToEncryptDTO {
 
     private String fileId;;
     private String fileName;

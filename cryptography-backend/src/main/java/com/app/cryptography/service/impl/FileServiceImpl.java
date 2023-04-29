@@ -1,7 +1,7 @@
 package com.app.cryptography.service.impl;
 
-import com.app.cryptography.dto.FileModelDTO;
-import com.app.cryptography.model.FileModel;
+import com.app.cryptography.dto.FileToEncryptDTO;
+import com.app.cryptography.model.FilesToEncrypt;
 import com.app.cryptography.repository.FileRepository;
 import com.app.cryptography.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
@@ -26,9 +26,9 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void saveFile(MultipartFile file, FileModelDTO fileModelDTO) throws IOException {
+    public void saveFile(MultipartFile file, FileToEncryptDTO fileToEncryptDTO) throws IOException {
       //  File savedFile = new File(filesPath + file.getOriginalFilename());
-        File savedFile = new File(filesPath + fileModelDTO.getFileId() + fileModelDTO.getFileExtension());
+        File savedFile = new File(filesPath + fileToEncryptDTO.getFileId() + fileToEncryptDTO.getFileExtension());
 
         //save file
         FileOutputStream fos = new FileOutputStream(savedFile);
@@ -36,34 +36,34 @@ public class FileServiceImpl implements FileService {
         fos.close();
 
         //convert
-        FileModel fileModel = mapToEntity(fileModelDTO);
-        fileModel.setFileStatus("Saved");
+        FilesToEncrypt filesToEncrypt = mapToEntity(fileToEncryptDTO);
+        filesToEncrypt.setFileStatus("Saved");
 
         //save in database
-        this.fileRepository.save(fileModel);
+        this.fileRepository.save(filesToEncrypt);
 
     }
 
     @Override
-    public void updateFile(FileModelDTO fileModelDTO) {
-       FileModel fileToUpdate = this.fileRepository.findById(fileModelDTO.getFileId()).get();
+    public void updateFile(FileToEncryptDTO fileToEncryptDTO) {
+       FilesToEncrypt fileToUpdate = this.fileRepository.findById(fileToEncryptDTO.getFileId()).get();
         fileToUpdate.setFileStatus("Encrypted");
         this.fileRepository.save(fileToUpdate);
     }
 
-    public List<FileModel> getAllFileModel() {
+    public List<FilesToEncrypt> getAllFileModel() {
         return this.fileRepository.findAll();
     }
 
-    public static FileModel mapToEntity(FileModelDTO fileModelDTO) {
-        FileModel fileModel = new FileModel();
-        fileModel.setFileId(fileModelDTO.getFileId());
-        fileModel.setFileExtension(fileModelDTO.getFileExtension());
-        fileModel.setFileType(fileModelDTO.getFileType());
-        fileModel.setFileSize(fileModelDTO.getFileSize());
-        fileModel.setFileName(fileModelDTO.getFileName());
-        fileModel.setRecipientsEmail(fileModelDTO.getRecipientsEmail());
-        return fileModel;
+    public static FilesToEncrypt mapToEntity(FileToEncryptDTO fileToEncryptDTO) {
+        FilesToEncrypt filesToEncrypt = new FilesToEncrypt();
+        filesToEncrypt.setFileId(fileToEncryptDTO.getFileId());
+        filesToEncrypt.setFileExtension(fileToEncryptDTO.getFileExtension());
+        filesToEncrypt.setFileType(fileToEncryptDTO.getFileType());
+        filesToEncrypt.setFileSize(fileToEncryptDTO.getFileSize());
+        filesToEncrypt.setFileName(fileToEncryptDTO.getFileName());
+        filesToEncrypt.setRecipientsEmail(fileToEncryptDTO.getRecipientsEmail());
+        return filesToEncrypt;
     }
 
 

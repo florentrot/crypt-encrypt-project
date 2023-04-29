@@ -1,27 +1,31 @@
 <main class="container bg-light">
   <h3>Encrypt</h3>
   <hr>
+
   <div class="row">
     <div class="col-3">
       <label for="fileToEncrypt">Select File:</label>
     </div>
+
     <div class="col-2">
       <input type="file" #fileToEncrypt
              (change)="insertFile($event)"
-             [disabled]="unsavedFiles.length"
+             [disabled]="selectedFile"
              id="fileToEncrypt"
              accept="audio/*,video/*,image/*,.txt,.pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx"
              required>
     </div>
   </div>
+
   <div class="row">
     <div class="col-3">
       <label for="recipientsEmail">Recipient's Email:</label>
     </div>
+
     <div class="col-2">
       <input type="email" #recipientsEmail
              id="recipientsEmail"
-              (keyup)="checkEmail()">
+             (keyup)="checkValidForm()">
     </div>
   </div>
 
@@ -37,7 +41,7 @@
       <button type="button"
               class="btn btn-success btn-sm"
               [disabled]="isConfirmDisabled"
-              (click)="confirmForm()">Confirm Form
+              (click)="onConfirmForm()">Confirm Form
       </button>
     </div>
   </div>

@@ -1,5 +1,5 @@
-import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FileUploadService} from "../../services/file-upload.service";
+import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
+import {FilesService} from "../../services/files.service";
 import {FileModel} from "../../model/file-model";
 import {FileEncryptService} from "../../services/file-encrypt.service";
 import {v4 as uuidv4} from 'uuid';
@@ -98,11 +98,10 @@ export class EncryptComponent implements OnInit {
   }
 
   ngOnDestroy() {
-    // Clean up subscriptions to prevent memory leaks
     this.dataUpdated$.unsubscribe();
   }
 
-  constructor(private fileUploadService: FileUploadService,
+  constructor(private fileUploadService: FilesService,
               private fileEncryptService: FileEncryptService) {
   }
 
@@ -132,20 +131,6 @@ export class EncryptComponent implements OnInit {
     this.unsavedFiles.push(fileModel);
   }
 
-  // CONFIRM
-  confirmForm() {
-    this.unsavedFiles[0].recipientsEmail = this.recipientsEmail.nativeElement.value;
-    this.onAddRow(this.unsavedFiles[0]);
-    console.log(this.unsavedFiles);
-
-    this.fileToEncrypt.nativeElement.value = null;
-    this.recipientsEmail.nativeElement.value = "";
-
-    this.isConfirmDisabled = true;
-    this.isClearDisabled = true;
-  }
-
-  // CLEAR
   clearForm() {
     this.fileToEncrypt.nativeElement.value = null;
     this.recipientsEmail.nativeElement.value = "";
@@ -158,7 +143,34 @@ export class EncryptComponent implements OnInit {
     this.onClearRows();
   }
 
-  // SAVE
+  onConfirmForm() {
+    this.unsavedFiles[0].recipientsEmail = this.recipientsEmail.nativeElement.value;
+    this.onAddRow(this.unsavedFiles[0]);
+    console.log(this.unsavedFiles);
+
+    this.fileToEncrypt.nativeElement.value = null;
+    this.recipientsEmail.nativeElement.value = "";
+
+    this.isConfirmDisabled = true;
+    this.isClearDisabled = true;
+  }
+
+  checkValidForm() {
+    // CHECK FOR ConfirmButton
+    if (this.selectedFile !== null && this.recipientsEmail.nativeElement.value.length) {
+      this.isConfirmDisabled = false;
+    } else {
+      this.isConfirmDisabled = true;
+    }
+
+    // CHECK FOR ClearButton
+    if(this.selectedFile !== null || this.recipientsEmail.nativeElement.value.length) {
+      this.isClearDisabled = false;
+    } else {
+      this.isClearDisabled = true;
+    }
+  }
+
   onSaveFile(fileModel: FileModel) {
     this.fileUploadService.uploadFile(fileModel).subscribe(() => {
       this.getAllData();
@@ -181,7 +193,6 @@ export class EncryptComponent implements OnInit {
     }, 5000)
   }
 
-  // ENCRYPT
   onEncrypt(fileModel: FileModel) {
     this.fileEncryptService.encrypt(fileModel).subscribe(() => {
       this.getAllData();
@@ -192,23 +203,6 @@ export class EncryptComponent implements OnInit {
     setTimeout(() => {
       this.isEncryptionDone = false;
     }, 5000)
-  }
-
-  checkValidForm() {
-    // CHECK FOR ConfirmButton
-    if (this.selectedFile !== null && this.recipientsEmail.nativeElement.value.length) {
-      this.isConfirmDisabled = false;
-    } else {
-      this.isConfirmDisabled = true;
-    }
-
-    // CHECK FOR ClearButton
-    if(this.selectedFile !== null || this.recipientsEmail.nativeElement.value.length) {
-      this.isClearDisabled = false;
-    } else {
-      this.isClearDisabled = true;
-    }
-
   }
 
   onAddRow(fileModel: FileModel): void {
@@ -246,7 +240,7 @@ export class EncryptComponent implements OnInit {
   }
 
   getAllData(): void {
-    this.fileUploadService.getAllFiles().pipe(
+    this.fileUploadService.getAllPersistentFiles().pipe(
       tap(data => {
         if (this.unsavedFiles.length) {
           data.push(this.unsavedFiles[0]);
@@ -262,9 +256,5 @@ export class EncryptComponent implements OnInit {
     if (this.unsavedFiles.length === 0) {
       this.isClearDisabled = true;
     }
-  }
-
-  checkEmail() {
-    this.checkValidForm();
   }
 }

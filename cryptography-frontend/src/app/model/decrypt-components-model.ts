@@ -1,6 +1,6 @@
 
-export class DecryptComponentsModel {
+export class DecryptComponentsDTO {
   fileId?: string;
-  iv?: string;
   keyNo?: string;
+  file?: File;
 }

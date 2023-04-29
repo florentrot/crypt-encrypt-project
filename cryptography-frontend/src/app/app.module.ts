@@ -14,8 +14,12 @@ import {DeleteButton} from "./components/ag-grid-component/button-cell-delete.co
 import {ConfirmButton} from "./components/ag-grid-component/button-cell-confirm.components";
 import {EncryptButton} from "./components/ag-grid-component/button-cell-encrypt.components";
 import {EncryptedButton} from "./components/ag-grid-component/button-cell-encrypted.components";
+import {DownloadButton} from "./components/ag-grid-component/button-cell-download.components";
+import {DownloadDisabledButton} from "./components/ag-grid-component/button-cell-download-disabled.components";
+import {FilesService} from "./services/files.service";
 
 const routes: Routes = [
+  {path: '', component: HowToUseComponent},
   {path: 'howToUse', component: HowToUseComponent},
   {path: 'encrypt', component: EncryptComponent},
   {path: 'decrypt', component: DecryptComponent}
@@ -31,7 +35,9 @@ const routes: Routes = [
     ConfirmButton,
     DeleteButton,
     EncryptButton,
-    EncryptedButton
+    EncryptedButton,
+    DownloadButton,
+    DownloadDisabledButton
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -40,7 +46,7 @@ const routes: Routes = [
     FormsModule,
     AgGridModule
   ],
-  providers: [],
+  providers: [FilesService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

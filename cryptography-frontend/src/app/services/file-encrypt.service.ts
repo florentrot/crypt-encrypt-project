@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import {Observable} from "rxjs";
 import {HttpClient} from "@angular/common/http";
-import {FileToEncrypt} from "../model/file-to-encrypt";
+import {FileEncryptDto} from "../dto/file-encrypt-dto";
 
 @Injectable({
   providedIn: 'root'
@@ -12,8 +12,8 @@ export class FileEncryptService {
 
   constructor(private http: HttpClient) { }
 
-  encrypt(fileToEncrypt: FileToEncrypt): Observable<any> {
-    return this.http.post<FileToEncrypt>(`${this.baseUrl}/encrypt`, fileToEncrypt);
+  encrypt(fileToEncrypt: FileEncryptDto): Observable<any> {
+    return this.http.post<FileEncryptDto>(`${this.baseUrl}/encrypt`, fileToEncrypt);
   }
 
 }

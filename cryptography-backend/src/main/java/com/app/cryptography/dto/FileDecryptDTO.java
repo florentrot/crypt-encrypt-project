@@ -3,9 +3,8 @@ package com.app.cryptography.dto;
 import lombok.Data;
 
 @Data
-public class DecryptComponentsDTO {
+public class FileDecryptDTO extends FileDTO{
 
-    private String fileId;
     private String keyNo;
 
 }

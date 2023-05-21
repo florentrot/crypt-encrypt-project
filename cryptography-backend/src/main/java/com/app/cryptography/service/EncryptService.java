@@ -1,6 +1,6 @@
 package com.app.cryptography.service;
 
-import com.app.cryptography.dto.FileToEncryptDTO;
+import com.app.cryptography.dto.FileEncryptDTO;
 import com.app.cryptography.model.CryptoComponents;
 
 import javax.crypto.NoSuchPaddingException;
@@ -10,5 +10,5 @@ import java.security.NoSuchAlgorithmException;
 
 public interface EncryptService {
 
-    CryptoComponents encrypt(String filePath, FileToEncryptDTO fileToEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException;
+    CryptoComponents encrypt(String filePath, FileEncryptDTO fileEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException;
 }

@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import {Observable} from 'rxjs';
 import {HttpClient} from "@angular/common/http";
-import {FileToEncrypt} from "../model/file-to-encrypt";
+import {FileEncryptDto} from "../dto/file-encrypt-dto";
 import {DecryptedFile} from "../model/decrypted-file";
+import {EncryptedFile} from "../model/encrypted-file";
 
 @Injectable({
   providedIn: 'root'
@@ -14,7 +15,7 @@ export class FilesService {
   constructor(private http: HttpClient) {
   }
 
-  uploadFile(fileToEncrypt: FileToEncrypt): Observable<any> {
+  uploadFile(fileToEncrypt: FileEncryptDto): Observable<any> {
     const formData: FormData = new FormData();
     formData.append('file_upload', fileToEncrypt.file, fileToEncrypt.file.name);
     formData.append('file_model', JSON.stringify(fileToEncrypt));
@@ -22,8 +23,8 @@ export class FilesService {
   }
 
 
-  getAllPersistentFiles(): Observable<FileToEncrypt[]> {
-    return this.http.get<FileToEncrypt[]>(`${this.baseUrl}/encryptedFiles`);
+  getAllPersistentFiles(): Observable<EncryptedFile[]> {
+    return this.http.get<EncryptedFile[]>(`${this.baseUrl}/encryptedFiles`);
   }
 
   getAllDecryptedFiles(): Observable<DecryptedFile[]> {

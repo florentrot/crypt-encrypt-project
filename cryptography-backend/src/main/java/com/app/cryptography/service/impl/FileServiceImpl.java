@@ -1,9 +1,9 @@
 package com.app.cryptography.service.impl;
 
-import com.app.cryptography.dto.FileToEncryptDTO;
-import com.app.cryptography.model.DecryptedFile;
-import com.app.cryptography.model.FileToEncrypt;
-import com.app.cryptography.repository.FileToEncryptRepository;
+import com.app.cryptography.dto.FileDTO;
+import com.app.cryptography.dto.FileEncryptDTO;
+import com.app.cryptography.model.EncryptedFile;
+import com.app.cryptography.repository.EncryptedFileRepository;
 import com.app.cryptography.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -20,16 +20,19 @@ public class FileServiceImpl implements FileService {
     @Value("${files.to.encrypt.path}")
     public String filesToEncryptPath;
 
-    FileToEncryptRepository fileToEncryptRepository;
+    @Value("${files.to.decrypt.path}")
+    public String filesToDecryptPath;
 
-    FileServiceImpl(FileToEncryptRepository fileToEncryptRepository) {
-        this.fileToEncryptRepository = fileToEncryptRepository;
+    EncryptedFileRepository encryptedFileRepository;
+
+    FileServiceImpl(EncryptedFileRepository encryptedFileRepository) {
+        this.encryptedFileRepository = encryptedFileRepository;
     }
 
     @Override
-    public void saveFileToEncrypt(MultipartFile file, FileToEncryptDTO fileToEncryptDTO) throws IOException {
-
-            File savedFile = new File(filesToEncryptPath + fileToEncryptDTO.getFileId() + fileToEncryptDTO.getFileExtension());
+    public void saveFile(MultipartFile file, FileDTO fileDTO) throws IOException {
+        if (fileDTO instanceof FileEncryptDTO) {
+         File savedFile = new File(filesToEncryptPath + fileDTO.getFileId() + fileDTO.getFileExtension());
 
             //save file
             FileOutputStream fos = new FileOutputStream(savedFile);
@@ -37,34 +40,44 @@ public class FileServiceImpl implements FileService {
             fos.close();
 
             //convert
-            FileToEncrypt fileToEncrypt = mapToEntity(fileToEncryptDTO);
-            fileToEncrypt.setFileStatus("Saved");
+            EncryptedFile encryptedFile = mapToEntity(fileDTO);
+            encryptedFile.setFileStatus("Saved");
 
             //save in database
-            this.fileToEncryptRepository.save(fileToEncrypt);
+            this.encryptedFileRepository.save(encryptedFile);
 
+        } else {
+          File savedFile = new File(filesToDecryptPath + fileDTO.getFileId() + ".enc"); // fileDTO.getFileExtension() after solv frontend
+
+            //save file
+            FileOutputStream fos = new FileOutputStream(savedFile);
+            fos.write(file.getBytes());
+            fos.close();
+
+        }
     }
+
 
     @Override
-    public void updateFile(FileToEncryptDTO fileToEncryptDTO) {
-        FileToEncrypt fileToUpdate = this.fileToEncryptRepository.findById(fileToEncryptDTO.getFileId()).get();
+    public void updateFile(FileEncryptDTO fileEncryptDTO) {
+        EncryptedFile fileToUpdate = this.encryptedFileRepository.findById(fileEncryptDTO.getFileId()).get();
         fileToUpdate.setFileStatus("Encrypted");
-        this.fileToEncryptRepository.save(fileToUpdate);
+        this.encryptedFileRepository.save(fileToUpdate);
     }
 
-    public List<FileToEncrypt> getAllFileModel() {
-        return this.fileToEncryptRepository.findAll();
+    public List<EncryptedFile> getAllFileModel() {
+        return this.encryptedFileRepository.findAll();
     }
 
-    public static FileToEncrypt mapToEntity(FileToEncryptDTO fileToEncryptDTO) {
-        FileToEncrypt fileToEncrypt = new FileToEncrypt();
-        fileToEncrypt.setFileId(fileToEncryptDTO.getFileId());
-        fileToEncrypt.setFileExtension(fileToEncryptDTO.getFileExtension());
-        fileToEncrypt.setFileType(fileToEncryptDTO.getFileType());
-        fileToEncrypt.setFileSize(fileToEncryptDTO.getFileSize());
-        fileToEncrypt.setFileName(fileToEncryptDTO.getFileName());
-        fileToEncrypt.setRecipientsEmail(fileToEncryptDTO.getRecipientsEmail());
-        return fileToEncrypt;
+    public static EncryptedFile mapToEntity(FileDTO fileToEncryptDTO) {
+        EncryptedFile encryptedFile = new EncryptedFile();
+        encryptedFile.setFileId(fileToEncryptDTO.getFileId());
+        encryptedFile.setFileExtension(fileToEncryptDTO.getFileExtension());
+        encryptedFile.setFileType(fileToEncryptDTO.getFileType());
+        encryptedFile.setFileSize(fileToEncryptDTO.getFileSize());
+        encryptedFile.setFileName(fileToEncryptDTO.getFileName());
+        encryptedFile.setRecipientsEmail(fileToEncryptDTO.getRecipientsEmail());
+        return encryptedFile;
     }
 
 

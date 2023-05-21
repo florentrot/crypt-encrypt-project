@@ -1,12 +1,12 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
-import {FileToEncrypt} from "../../model/file-to-encrypt";
+import {FileEncryptDto} from "../../dto/file-encrypt-dto";
 import {AgGridAngular} from "ag-grid-angular";
 import {ColumnApi, GridApi, GridOptions} from "ag-grid-community";
 import {Subject} from "rxjs";
 import {FilesService} from "../../services/files.service";
 import {DownloadButton} from "../ag-grid-component/button-cell-download.components";
 import {DownloadDisabledButton} from "../ag-grid-component/button-cell-download-disabled.components";
-import {DecryptComponentsDTO} from "../../dto/decrypt-components-dto";
+import {FileDecryptDto} from "../../dto/file-decrypt-dto";
 import {FileDecryptService} from "../../services/file-decrypt.service";
 
 @Component({
@@ -21,14 +21,14 @@ export class DecryptComponent implements OnInit {
   @ViewChild("keyNumber") keyNumber: ElementRef;
   @ViewChild("agGrid") agGrid: AgGridAngular;
 
-  decryptComponentsDTO: DecryptComponentsDTO;
+  decryptComponentsDTO: FileDecryptDto;
   isDecryptDisabled: boolean = true;
   isAnyError: boolean = false;
   isClearDisabled: boolean = true;
   isDecryptionDone: boolean = false;
 
   selectedFile: File = null;
-  filesToDecrypt = new Array<FileToEncrypt>();
+  filesToDecrypt = new Array<FileEncryptDto>();
   rowData: any[];
   columnApi: ColumnApi;
   gridApi: GridApi;
@@ -114,7 +114,7 @@ export class DecryptComponent implements OnInit {
   }
 
   onDecrypt() {
-    this.decryptComponentsDTO = new DecryptComponentsDTO();
+    this.decryptComponentsDTO = new FileDecryptDto();
     this.decryptComponentsDTO.file = this.selectedFile;
     this.decryptComponentsDTO.fileId = this.fileId.nativeElement.value;
     this.decryptComponentsDTO.keyNo = this.keyNumber.nativeElement.value;

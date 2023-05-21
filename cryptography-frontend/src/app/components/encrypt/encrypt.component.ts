@@ -1,6 +1,6 @@
 import {Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {FilesService} from "../../services/files.service";
-import {FileToEncrypt} from "../../model/file-to-encrypt";
+import {FileEncryptDto} from "../../dto/file-encrypt-dto";
 import {FileEncryptService} from "../../services/file-encrypt.service";
 import {v4 as uuidv4} from 'uuid';
 import {ConfirmButton} from "../ag-grid-component/button-cell-confirm.components";
@@ -29,7 +29,7 @@ export class EncryptComponent implements OnInit {
   isEncryptionDone: boolean = false;
 
   selectedFile: File = null;
-  unsavedFiles = new Array<FileToEncrypt>();
+  unsavedFiles = new Array<FileEncryptDto>();
   rowData: any[];
   columnApi: ColumnApi;
   gridApi: GridApi;
@@ -120,10 +120,10 @@ export class EncryptComponent implements OnInit {
   }
 
   private addFileModel(file: File) {
-    let fileToEncrypt = new FileToEncrypt();
+    let fileToEncrypt = new FileEncryptDto();
     fileToEncrypt.fileId = uuidv4();
     fileToEncrypt.fileName = file.name.substring(0, file.name.lastIndexOf("."));
-    fileToEncrypt.fileSize = file.size;
+    fileToEncrypt.fileSize = String(file.size);
     fileToEncrypt.fileType = file.type;
     fileToEncrypt.fileExtension = file.name.substring(file.name.lastIndexOf("."), file.name.length);
     fileToEncrypt.fileStatus = "Unconfirmed";
@@ -170,7 +170,7 @@ export class EncryptComponent implements OnInit {
     }
   }
 
-  onSaveFile(fileToEncrypt: FileToEncrypt) {
+  onSaveFile(fileToEncrypt: FileEncryptDto) {
     this.fileUploadService.uploadFile(fileToEncrypt).subscribe(() => {
       this.getAllData();
       this.refreshData();
@@ -192,7 +192,7 @@ export class EncryptComponent implements OnInit {
     }, 5000)
   }
 
-  onEncrypt(fileToEncrypt: FileToEncrypt) {
+  onEncrypt(fileToEncrypt: FileEncryptDto) {
     this.fileEncryptService.encrypt(fileToEncrypt).subscribe(() => {
       this.getAllData();
       this.refreshData()
@@ -204,7 +204,7 @@ export class EncryptComponent implements OnInit {
     }, 5000)
   }
 
-  onAddRow(fileToEncrypt: FileToEncrypt): void {
+  onAddRow(fileToEncrypt: FileEncryptDto): void {
     this.rowData.push(fileToEncrypt);
     this.gridApi.applyTransaction({
         add: [fileToEncrypt]
@@ -212,7 +212,7 @@ export class EncryptComponent implements OnInit {
     );
   }
 
-  onRemoveRow(fileToEncrypt: FileToEncrypt): void {
+  onRemoveRow(fileToEncrypt: FileEncryptDto): void {
     this.rowData = this.rowData.filter(data => data !== fileToEncrypt);
     console.log(this.rowData);
     this.unsavedFiles = this.unsavedFiles.filter(data => data !== fileToEncrypt);

@@ -1,11 +1,10 @@
-export class FileToEncrypt {
+
+export class FileDTO {
 
   fileId?: string;
   fileName?: string;
   fileExtension?: string;
+  fileSize?: string;
   fileType?: string;
-  fileSize?: number;
-  fileStatus?: string;
   recipientsEmail?: string;
-  file?: File;
 }

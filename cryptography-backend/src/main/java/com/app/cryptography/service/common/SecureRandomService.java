@@ -3,8 +3,7 @@ package com.app.cryptography.service.common;
 import java.security.SecureRandom;
 import java.util.HashMap;
 
-public class NewSecureRandomService {
-
+public class SecureRandomService {
 
     private HashMap<String, byte[]> cryptoComponents = new HashMap<>();
     private SecureRandom sr = new SecureRandom();

@@ -1,8 +1,8 @@
 package com.app.cryptography.controller;
 
-import com.app.cryptography.dto.FileToEncryptDTO;
+import com.app.cryptography.dto.FileEncryptDTO;
 import com.app.cryptography.model.CryptoComponents;
-import com.app.cryptography.model.FileToEncrypt;
+import com.app.cryptography.model.EncryptedFile;
 import com.app.cryptography.service.EncryptService;
 import com.app.cryptography.service.SecretService;
 import com.app.cryptography.service.common.JsonRequestService;
@@ -36,21 +36,21 @@ public class EncryptController {
     @PostMapping("/upload")
     public void uploadFile(@RequestParam("file_upload") MultipartFile file_upload,
                            @RequestParam("file_model") String encryptMessage) throws IOException {
-        FileToEncryptDTO fileToEncryptDTO = (FileToEncryptDTO) JsonRequestService.fromJsonMethod(encryptMessage, FileToEncryptDTO.class);
-        this.fileService.saveFileToEncrypt(file_upload, fileToEncryptDTO);
+        FileEncryptDTO fileEncryptDTO = (FileEncryptDTO) JsonRequestService.fromJsonMethod(encryptMessage, FileEncryptDTO.class);
+        this.fileService.saveFile(file_upload, fileEncryptDTO);
     }
 
     @PostMapping("/encrypt")
-    public void encryptFile(@RequestBody FileToEncryptDTO fileToEncryptDTO) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
-        CryptoComponents cryptoComponents = this.encryptService.encrypt("src/main/resources/clear-files/" + fileToEncryptDTO.getFileId() + fileToEncryptDTO.getFileExtension(), fileToEncryptDTO);
+    public void encryptFile(@RequestBody FileEncryptDTO fileEncryptDTO) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException {
+        CryptoComponents cryptoComponents = this.encryptService.encrypt("src/main/resources/clear-files/" + fileEncryptDTO.getFileId() + fileEncryptDTO.getFileExtension(), fileEncryptDTO);
         //save details for decrypt
         this.secretService.saveCryptoComponents(cryptoComponents);
         //update file status
-        this.fileService.updateFile(fileToEncryptDTO);
+        this.fileService.updateFile(fileEncryptDTO);
     }
 
     @GetMapping("/encryptedFiles")
-    public List<FileToEncrypt> getAllFileModel() {
+    public List<EncryptedFile> getAllFileModel() {
         return this.fileService.getAllFileModel();
     }
 

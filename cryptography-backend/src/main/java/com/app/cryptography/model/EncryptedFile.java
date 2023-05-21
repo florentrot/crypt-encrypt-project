@@ -11,7 +11,7 @@ import java.nio.file.Paths;
 
 @Data
 @Document
-public class FileToEncrypt {
+public class EncryptedFile {
     @Id
     private String fileId;
     private String fileName;
@@ -23,10 +23,10 @@ public class FileToEncrypt {
     private String recipientsEmail;
     private File file;
 
-    public FileToEncrypt() {
+    public EncryptedFile() {
     }
 
-    public FileToEncrypt(String fileName, String filePath, String fileExtension, String fileType, String size, String fileStatus, String recipientsEmail) {
+    public EncryptedFile(String fileName, String filePath, String fileExtension, String fileType, String size, String fileStatus, String recipientsEmail) {
         this.fileName = fileName;
         this.filePath = filePath;
         this.fileExtension = fileExtension;
@@ -38,7 +38,7 @@ public class FileToEncrypt {
 
 
 
-    public FileToEncrypt(File file) {
+    public EncryptedFile(File file) {
         this.file = file;
         this.fileName = file.getName();
         this.filePath = file.getPath();

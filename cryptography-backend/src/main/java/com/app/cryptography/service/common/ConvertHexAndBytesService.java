@@ -1,9 +1,9 @@
 package com.app.cryptography.service.common;
 
 public class ConvertHexAndBytesService {
-    private String hex;    //htb
+    private String hex;    //hexToByte
     private byte[] ans;
-    private byte[] bytes;    //bth
+    private byte[] bytes;    //ByteToHex
 
     public ConvertHexAndBytesService(byte[] bytes) {
         this.bytes = bytes;

@@ -1,6 +1,7 @@
 package com.app.cryptography.controller;
 
-import com.app.cryptography.dto.DecryptComponentsDTO;
+import com.app.cryptography.dto.FileDecryptDTO;
+import com.app.cryptography.model.DecryptedFile;
 import com.app.cryptography.service.DecryptService;
 import com.app.cryptography.service.FileService;
 import com.app.cryptography.service.common.JsonRequestService;
@@ -31,13 +32,14 @@ public class DecryptController {
     @PostMapping("/decrypt")
     public void decryptFile(@RequestParam("file_upload") MultipartFile file_upload,
                             @RequestParam("decrypt_model") String decryptMessage) throws InvalidAlgorithmParameterException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, IOException {
-        DecryptComponentsDTO decryptComponentsDTO = (DecryptComponentsDTO) JsonRequestService.fromJsonMethod(decryptMessage, DecryptComponentsDTO.class);
-        this.decryptService.decrypt(file_upload, "src/main/resources/enc-files/" + decryptComponentsDTO.getFileId() + ".enc", decryptComponentsDTO);
+        FileDecryptDTO fileDecryptDTO = (FileDecryptDTO) JsonRequestService.fromJsonMethod(decryptMessage, FileDecryptDTO.class);
+        this.fileService.saveFile(file_upload, fileDecryptDTO);
+        this.decryptService.decrypt("src/main/resources/enc-files/" + fileDecryptDTO.getFileId() + ".enc", fileDecryptDTO); // change with decryptComponentsDTO.getFileExtension() after mapping same in frontend
        // this.fileService.updateFile(fileToEncryptDTO);
     }
 
     @GetMapping("/decryptedFiles")
-    public List<String> getAllFileModel() {
+    public List<DecryptedFile> getAllFileModel() {
         return new ArrayList<>();
     }
 }

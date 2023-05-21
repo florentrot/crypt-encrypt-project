@@ -1,11 +1,11 @@
 package com.app.cryptography.service.impl;
 
-import com.app.cryptography.dto.FileToEncryptDTO;
+import com.app.cryptography.dto.FileEncryptDTO;
 import com.app.cryptography.model.CryptoComponents;
-import com.app.cryptography.model.FileToEncrypt;
+import com.app.cryptography.model.EncryptedFile;
 import com.app.cryptography.service.EncryptService;
 import com.app.cryptography.service.common.ConvertHexAndBytesService;
-import com.app.cryptography.service.common.NewSecureRandomService;
+import com.app.cryptography.service.common.SecureRandomService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -35,21 +35,21 @@ public class EncryptServiceImpl implements EncryptService {
     private static final String CIPHER = "AES/CBC/PKCS5PADDING";
 
 
-    public CryptoComponents encrypt(String filePath, FileToEncryptDTO fileToEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
+    public CryptoComponents encrypt(String filePath, FileEncryptDTO fileEncryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException {
 
         //1. create NewSecureRandom object
-        NewSecureRandomService nsr = new NewSecureRandomService();
+        SecureRandomService nsr = new SecureRandomService();
         nsr.generateSecureRandom();
 
         //2. get iv and key hexa
         CryptoComponents ec = new CryptoComponents();
-        ec.setFileId(fileToEncryptDTO.getFileId());
+        ec.setFileId(fileEncryptDTO.getFileId());
         ec.setKeyNo(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("key")).bytesToHex());
         ec.setIV(new ConvertHexAndBytesService(nsr.getCryptoComponents().get("iv")).bytesToHex());
 
         //3. path to file
         File file = new File(filePath);
-        FileToEncrypt fileToEncrypt = new FileToEncrypt(file);
+        EncryptedFile encryptedFile = new EncryptedFile(file);
 
 
         //4. create IvParameterSpec and SecretKeySpec
@@ -65,8 +65,8 @@ public class EncryptServiceImpl implements EncryptService {
         final Path criptDir = Paths.get(encryptPath);
 
         //7. encrypt
-        final Path encryptedFilePath = criptDir.resolve(fileToEncrypt.getFileName().substring(0, fileToEncrypt.getFileName().indexOf(".")) + ".enc");
-        try (InputStream fin = Files.newInputStream(Paths.get(fileToEncrypt.getFilePath()));
+        final Path encryptedFilePath = criptDir.resolve(encryptedFile.getFileName().substring(0, encryptedFile.getFileName().indexOf(".")) + ".enc");
+        try (InputStream fin = Files.newInputStream(Paths.get(encryptedFile.getFilePath()));
              OutputStream fout = Files.newOutputStream(encryptedFilePath);
              CipherOutputStream cipherOut = new CipherOutputStream(fout, cipher) {
              }) {

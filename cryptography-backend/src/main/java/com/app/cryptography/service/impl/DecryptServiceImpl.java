@@ -1,18 +1,17 @@
 package com.app.cryptography.service.impl;
 
-import com.app.cryptography.dto.DecryptComponentsDTO;
+import com.app.cryptography.dto.FileDecryptDTO;
 import com.app.cryptography.model.CryptoComponents;
 import com.app.cryptography.model.DecryptedFile;
 import com.app.cryptography.repository.CryptoComponentsRepository;
-import com.app.cryptography.repository.FileToEncryptRepository;
+import com.app.cryptography.repository.EncryptedFileRepository;
 import com.app.cryptography.service.DecryptService;
 import com.app.cryptography.service.FileService;
 import com.app.cryptography.service.common.ConvertHexAndBytesService;
-import com.app.cryptography.service.common.NewSecureRandomService;
+import com.app.cryptography.service.common.SecureRandomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -37,7 +36,7 @@ public class DecryptServiceImpl implements DecryptService {
     CryptoComponentsRepository cryptoComponentsRepository;
 
     @Autowired
-    FileToEncryptRepository fileToEncryptRepository;
+    EncryptedFileRepository encryptedFileRepository;
 
     @Autowired
     FileService fileService;
@@ -52,16 +51,16 @@ public class DecryptServiceImpl implements DecryptService {
     private static final String CIPHER = "AES/CBC/PKCS5PADDING";
 
 
-    public DecryptedFile decrypt(MultipartFile multipartFile, String filePath, DecryptComponentsDTO decryptComponentsDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IOException {
+    public DecryptedFile decrypt(String filePath, FileDecryptDTO fileDecryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IOException {
         DecryptedFile decryptedFile = new DecryptedFile();
 
         //1. create NewSecureRandom object
-        NewSecureRandomService nsr = new NewSecureRandomService();
+        SecureRandomService nsr = new SecureRandomService();
         nsr.generateSecureRandom();
 
         //2. get key and iv
-        String keyString = decryptComponentsDTO.getKeyNo();
-        String fileId = decryptComponentsDTO.getFileId();
+        String keyString = fileDecryptDTO.getKeyNo();
+        String fileId = fileDecryptDTO.getFileId();
         String ivString = "";
 
 
@@ -91,8 +90,8 @@ public class DecryptServiceImpl implements DecryptService {
 
 
             //3.1 get file ext and file name
-            String ext = this.fileToEncryptRepository.findById(decryptComponentsDTO.getFileId()).get().getFileExtension();
-            String fileName = this.fileToEncryptRepository.findById(decryptComponentsDTO.getFileId()).get().getFileName();
+            String ext = this.encryptedFileRepository.findById(fileDecryptDTO.getFileId()).get().getFileExtension();
+            String fileName = this.encryptedFileRepository.findById(fileDecryptDTO.getFileId()).get().getFileName();
 
             //6. create cipher
             Cipher cipher = Cipher.getInstance(CIPHER);

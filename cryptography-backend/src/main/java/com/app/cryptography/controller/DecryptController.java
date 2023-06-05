@@ -2,6 +2,7 @@ package com.app.cryptography.controller;
 
 import com.app.cryptography.dto.FileDecryptDTO;
 import com.app.cryptography.model.DecryptedFile;
+import com.app.cryptography.model.EncryptedFile;
 import com.app.cryptography.service.DecryptService;
 import com.app.cryptography.service.FileService;
 import com.app.cryptography.service.common.JsonRequestService;
@@ -35,11 +36,11 @@ public class DecryptController {
         FileDecryptDTO fileDecryptDTO = (FileDecryptDTO) JsonRequestService.fromJsonMethod(decryptMessage, FileDecryptDTO.class);
         this.fileService.saveFile(file_upload, fileDecryptDTO);
         this.decryptService.decrypt("src/main/resources/enc-files/" + fileDecryptDTO.getFileId() + ".enc", fileDecryptDTO); // change with decryptComponentsDTO.getFileExtension() after mapping same in frontend
-       // this.fileService.updateFile(fileToEncryptDTO);
+       //  this.fileService.updateFile(fileToEncryptDTO);
     }
 
     @GetMapping("/decryptedFiles")
     public List<DecryptedFile> getAllFileModel() {
-        return new ArrayList<>();
+        return this.fileService.getAllDecryptedFiles();
     }
 }

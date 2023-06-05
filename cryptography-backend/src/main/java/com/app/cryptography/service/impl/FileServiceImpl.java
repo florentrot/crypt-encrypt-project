@@ -2,7 +2,9 @@ package com.app.cryptography.service.impl;
 
 import com.app.cryptography.dto.FileDTO;
 import com.app.cryptography.dto.FileEncryptDTO;
+import com.app.cryptography.model.DecryptedFile;
 import com.app.cryptography.model.EncryptedFile;
+import com.app.cryptography.repository.DecryptedFileRepository;
 import com.app.cryptography.repository.EncryptedFileRepository;
 import com.app.cryptography.service.FileService;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,8 +27,11 @@ public class FileServiceImpl implements FileService {
 
     EncryptedFileRepository encryptedFileRepository;
 
-    FileServiceImpl(EncryptedFileRepository encryptedFileRepository) {
+    DecryptedFileRepository decryptedFileRepository;
+
+    FileServiceImpl(EncryptedFileRepository encryptedFileRepository, DecryptedFileRepository decryptedFileRepository) {
         this.encryptedFileRepository = encryptedFileRepository;
+        this.decryptedFileRepository = decryptedFileRepository;
     }
 
     @Override
@@ -47,7 +52,7 @@ public class FileServiceImpl implements FileService {
             this.encryptedFileRepository.save(encryptedFile);
 
         } else {
-          File savedFile = new File(filesToDecryptPath + fileDTO.getFileId() + ".enc"); // fileDTO.getFileExtension() after solv frontend
+          File savedFile = new File(filesToDecryptPath + fileDTO.getFileId() + ".enc"); // fileDTO.getFileExtension() after solve frontend
 
             //save file
             FileOutputStream fos = new FileOutputStream(savedFile);
@@ -65,8 +70,14 @@ public class FileServiceImpl implements FileService {
         this.encryptedFileRepository.save(fileToUpdate);
     }
 
+    @Override
     public List<EncryptedFile> getAllFileModel() {
         return this.encryptedFileRepository.findAll();
+    }
+
+    @Override
+    public List<DecryptedFile> getAllDecryptedFiles() {
+        return this.decryptedFileRepository.findAll();
     }
 
     public static EncryptedFile mapToEntity(FileDTO fileToEncryptDTO) {

@@ -8,9 +8,9 @@ import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 
 public interface DecryptService {
 
      DecryptedFile decrypt(String filePath, FileDecryptDTO fileDecryptDTO) throws NoSuchPaddingException, NoSuchAlgorithmException, InvalidAlgorithmParameterException, InvalidKeyException, IOException;
-
 }

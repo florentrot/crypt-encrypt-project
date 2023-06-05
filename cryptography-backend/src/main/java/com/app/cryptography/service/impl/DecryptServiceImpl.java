@@ -4,6 +4,7 @@ import com.app.cryptography.dto.FileDecryptDTO;
 import com.app.cryptography.model.CryptoComponents;
 import com.app.cryptography.model.DecryptedFile;
 import com.app.cryptography.repository.CryptoComponentsRepository;
+import com.app.cryptography.repository.DecryptedFileRepository;
 import com.app.cryptography.repository.EncryptedFileRepository;
 import com.app.cryptography.service.DecryptService;
 import com.app.cryptography.service.FileService;
@@ -37,6 +38,9 @@ public class DecryptServiceImpl implements DecryptService {
 
     @Autowired
     EncryptedFileRepository encryptedFileRepository;
+
+    @Autowired
+    DecryptedFileRepository decryptedFileRepository;
 
     @Autowired
     FileService fileService;
@@ -91,7 +95,7 @@ public class DecryptServiceImpl implements DecryptService {
 
             //3.1 get file ext and file name
             String ext = this.encryptedFileRepository.findById(fileDecryptDTO.getFileId()).get().getFileExtension();
-            String fileName = this.encryptedFileRepository.findById(fileDecryptDTO.getFileId()).get().getFileName();
+            String fileName = fileDecryptDTO.getFileId();
 
             //6. create cipher
             Cipher cipher = Cipher.getInstance(CIPHER);
@@ -101,20 +105,14 @@ public class DecryptServiceImpl implements DecryptService {
                 decryptedFile = null;
             }
 
-            //6.0 save files
-
             //6. define path
-            final Path clearDir = Paths.get(decryptPath);
+            final Path decryptDir = Paths.get(decryptPath);
             final Path encryptDir = Paths.get(encryptPath);
-            /**
-             * add src/main/resources/enc-files/ instead of encryptPath
-             * before of that I need to save the file
-             */
 
             //7. decrypt
             final Path encryptedFilePath = encryptDir.resolve(decryptedFile.getFileName());
             cipher.init(Cipher.DECRYPT_MODE, skeySpec, iv);
-            final Path decryptedPath = clearDir.resolve(fileName + ext);
+            final Path decryptedPath = decryptDir.resolve(fileName + ext);
             try (InputStream encryptedData = Files.newInputStream(encryptedFilePath);
                  CipherInputStream decryptStream = new CipherInputStream(encryptedData, cipher);
                  OutputStream decryptedOut = Files.newOutputStream(decryptedPath)) {
@@ -126,9 +124,21 @@ public class DecryptServiceImpl implements DecryptService {
             } catch (Exception ex) {
                 System.out.println("Ops!");
             }
+            this.decryptedFileRepository.save(this.convertForDB(decryptedFile));
             return decryptedFile;
         } else {
             return null;
         }
+    }
+
+    public DecryptedFile convertForDB(DecryptedFile decryptedFile) {
+        DecryptedFile decryptedFileForDB = new DecryptedFile();
+
+        int dotIndex = decryptedFile.getFileName().lastIndexOf('.');
+        decryptedFileForDB.setFileId(decryptedFile.getFileName().substring(0, dotIndex));
+        String realFileName = this.encryptedFileRepository.findById(decryptedFileForDB.getFileId()).get().getFileName();
+        decryptedFileForDB.setFileName(realFileName);
+        decryptedFileForDB.setFileStatus("DECRYPTED");
+        return decryptedFileForDB;
     }
 }
